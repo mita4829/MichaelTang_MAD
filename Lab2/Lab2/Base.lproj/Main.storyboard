@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_0" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Lab2" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="yfd-4s-lB8">
+                                <rect key="frame" x="11" y="108" width="298" height="353"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="hdQ-Zu-UMA">
+                                        <rect key="frame" x="0.0" y="0.0" width="298" height="272"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cat" translatesAutoresizingMaskIntoConstraints="NO" id="8Tq-Bd-IqW">
+                                                <rect key="frame" x="59" y="0.0" width="180" height="180"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="100" id="05n-rH-HMO"/>
+                                                    <constraint firstAttribute="width" constant="180" id="7tM-04-72g"/>
+                                                    <constraint firstAttribute="width" constant="100" id="XEo-zf-ijd"/>
+                                                    <constraint firstAttribute="height" constant="180" id="nRm-ze-ekl"/>
+                                                </constraints>
+                                                <variation key="default">
+                                                    <mask key="constraints">
+                                                        <exclude reference="05n-rH-HMO"/>
+                                                        <exclude reference="7tM-04-72g"/>
+                                                        <exclude reference="XEo-zf-ijd"/>
+                                                        <exclude reference="nRm-ze-ekl"/>
+                                                    </mask>
+                                                </variation>
+                                                <variation key="heightClass=compact-widthClass=compact">
+                                                    <mask key="constraints">
+                                                        <include reference="05n-rH-HMO"/>
+                                                        <include reference="XEo-zf-ijd"/>
+                                                    </mask>
+                                                </variation>
+                                                <variation key="heightClass=regular-widthClass=compact">
+                                                    <mask key="constraints">
+                                                        <include reference="7tM-04-72g"/>
+                                                        <include reference="nRm-ze-ekl"/>
+                                                    </mask>
+                                                </variation>
+                                            </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="YES" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="730-BK-kC8">
+                                                <rect key="frame" x="133.5" y="200" width="31" height="24"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="24" id="D6e-ll-41i"/>
+                                                    <constraint firstAttribute="height" constant="24" id="lTr-3e-Zmc"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                                <variation key="default">
+                                                    <mask key="constraints">
+                                                        <exclude reference="D6e-ll-41i"/>
+                                                        <exclude reference="lTr-3e-Zmc"/>
+                                                    </mask>
+                                                </variation>
+                                                <variation key="heightClass=compact-widthClass=compact">
+                                                    <mask key="constraints">
+                                                        <include reference="D6e-ll-41i"/>
+                                                    </mask>
+                                                </variation>
+                                                <variation key="heightClass=regular-widthClass=compact">
+                                                    <mask key="constraints">
+                                                        <include reference="lTr-3e-Zmc"/>
+                                                    </mask>
+                                                </variation>
+                                            </label>
+                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="GN3-v6-T03">
+                                                <rect key="frame" x="112.5" y="244" width="73" height="29"/>
+                                                <segments>
+                                                    <segment title="Yes"/>
+                                                    <segment title="No"/>
+                                                </segments>
+                                                <color key="tintColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
+                                                <connections>
+                                                    <action selector="segControl:" destination="BYZ-38-t0r" eventType="valueChanged" id="Eq8-sU-yKB"/>
+                                                </connections>
+                                            </segmentedControl>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="Brc-TJ-aez">
+                                        <rect key="frame" x="0.0" y="282" width="298" height="31"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Capitalization" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1zw-8Z-aXG">
+                                                <rect key="frame" x="0.0" y="0.0" width="229" height="31"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wTL-DI-gu3">
+                                                <rect key="frame" x="249" y="0.0" width="51" height="31"/>
+                                                <color key="onTintColor" red="0.0" green="0.38923918058966134" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <connections>
+                                                    <action selector="flipSwitch:" destination="BYZ-38-t0r" eventType="valueChanged" id="n3G-op-msy"/>
+                                                </connections>
+                                            </switch>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="nQ1-D8-rNJ">
+                                        <rect key="frame" x="0.0" y="323" width="298" height="30"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="16" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t52-Gb-NFX">
+                                                <rect key="frame" x="0.0" y="0.0" width="18" height="30"/>
+                                                <color key="tintColor" red="0.0" green="0.38823529411764707" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="16" minValue="6" maxValue="22" translatesAutoresizingMaskIntoConstraints="NO" id="L8j-j7-kDp">
+                                                <rect key="frame" x="36" y="0.0" width="264" height="31"/>
+                                                <color key="tintColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="220" id="byZ-Xx-5P1"/>
+                                                </constraints>
+                                                <variation key="default">
+                                                    <mask key="constraints">
+                                                        <exclude reference="byZ-Xx-5P1"/>
+                                                    </mask>
+                                                </variation>
+                                                <variation key="heightClass=compact-widthClass=compact">
+                                                    <mask key="constraints">
+                                                        <include reference="byZ-Xx-5P1"/>
+                                                    </mask>
+                                                </variation>
+                                                <connections>
+                                                    <action selector="changeFontSize:" destination="BYZ-38-t0r" eventType="valueChanged" id="bZ0-7e-x9R"/>
+                                                </connections>
+                                            </slider>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <variation key="heightClass=compact-widthClass=compact" alignment="center" axis="vertical"/>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.47684553138662045" green="0.684487478834097" blue="0.92219225888324874" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="yfd-4s-lB8" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="5px-U9-gjq"/>
+                            <constraint firstItem="yfd-4s-lB8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7au-NH-6wH"/>
+                            <constraint firstItem="yfd-4s-lB8" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Hx3-ks-NdE"/>
+                            <constraint firstItem="yfd-4s-lB8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="TWS-6l-rlt"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="5px-U9-gjq"/>
+                                <exclude reference="7au-NH-6wH"/>
+                                <exclude reference="Hx3-ks-NdE"/>
+                                <exclude reference="TWS-6l-rlt"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=compact-widthClass=compact">
+                            <mask key="constraints">
+                                <include reference="Hx3-ks-NdE"/>
+                                <include reference="TWS-6l-rlt"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="constraints">
+                                <include reference="5px-U9-gjq"/>
+                                <include reference="7au-NH-6wH"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="myImage" destination="8Tq-Bd-IqW" id="IK7-dz-PHs"/>
+                        <outlet property="mySlider" destination="L8j-j7-kDp" id="zVL-EK-Dfh"/>
+                        <outlet property="mySwitch" destination="wTL-DI-gu3" id="Q0t-JK-MXn"/>
+                        <outlet property="myTitleLabel" destination="730-BK-kC8" id="dpb-m8-K4s"/>
+                        <outlet property="segControl" destination="GN3-v6-T03" id="ac2-4z-m1T"/>
+                        <outlet property="silderLabel" destination="t52-Gb-NFX" id="tQ0-rf-dI3"/>
+                        <outlet property="switchLabel" destination="1zw-8Z-aXG" id="CES-MR-cVP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="136.23188405797103" y="136.14130434782609"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="cat" width="81" height="68"/>
+    </resources>
+</document>
