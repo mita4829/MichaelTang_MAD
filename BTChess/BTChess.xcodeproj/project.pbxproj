@@ -12,6 +12,8 @@
 		6D2BF2301F742B7500198742 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D2BF22E1F742B7500198742 /* Main.storyboard */; };
 		6D2BF2321F742B7500198742 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D2BF2311F742B7500198742 /* Assets.xcassets */; };
 		6D2BF2351F742B7500198742 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D2BF2331F742B7500198742 /* LaunchScreen.storyboard */; };
+		6D40EDCF1F78004B0009C830 /* BoardSquare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D40EDCE1F78004B0009C830 /* BoardSquare.swift */; };
+		6D40EDD11F7801930009C830 /* BoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D40EDD01F7801930009C830 /* BoardModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		6D2BF2311F742B7500198742 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6D2BF2341F742B7500198742 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6D2BF2361F742B7500198742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6D40EDCE1F78004B0009C830 /* BoardSquare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardSquare.swift; sourceTree = "<group>"; };
+		6D40EDD01F7801930009C830 /* BoardModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,10 +60,12 @@
 			children = (
 				6D2BF22A1F742B7500198742 /* AppDelegate.swift */,
 				6D2BF22C1F742B7500198742 /* ViewController.swift */,
+				6D40EDD01F7801930009C830 /* BoardModel.swift */,
 				6D2BF22E1F742B7500198742 /* Main.storyboard */,
 				6D2BF2311F742B7500198742 /* Assets.xcassets */,
 				6D2BF2331F742B7500198742 /* LaunchScreen.storyboard */,
 				6D2BF2361F742B7500198742 /* Info.plist */,
+				6D40EDCE1F78004B0009C830 /* BoardSquare.swift */,
 			);
 			path = BTChess;
 			sourceTree = "<group>";
@@ -97,6 +103,7 @@
 					6D2BF2261F742B7400198742 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = KRSWH4Y4D5;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -137,7 +144,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D40EDD11F7801930009C830 /* BoardModel.swift in Sources */,
 				6D2BF22D1F742B7500198742 /* ViewController.swift in Sources */,
+				6D40EDCF1F78004B0009C830 /* BoardSquare.swift in Sources */,
 				6D2BF22B1F742B7500198742 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -263,11 +272,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = KRSWH4Y4D5;
 				INFOPLIST_FILE = BTChess/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = michael.BTChess;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -276,6 +287,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = KRSWH4Y4D5;
 				INFOPLIST_FILE = BTChess/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -304,6 +316,7 @@
 				6D2BF23B1F742B7500198742 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

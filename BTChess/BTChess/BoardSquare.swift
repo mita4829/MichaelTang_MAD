@@ -9,5 +9,6 @@
 import UIKit
 
 class BoardSquare: UICollectionViewCell {
+    @IBOutlet weak var pieceImage: UIImageView!
     
 }
