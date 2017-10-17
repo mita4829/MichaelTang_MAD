@@ -7,7 +7,8 @@
 //
 
 import Foundation
-
+import AudioToolbox
+//import UIKit
 //Moves
 class Moves{
     var row:Int
@@ -25,12 +26,13 @@ class Event{
     var toRow:Int
     var toCol:Int
     var captured:Piece?
+    var promotionHappend:Bool
     //State event, castling
-    //[blackKingHasMoved;whiteKingHasMoved;blackQueenRookHasMoved;blackKingRookHasMoved;whiteKingRookHasMoved;whiteQueenRookHasMoved;kingSideCastle;queenSideCastle;]
+    //[wk, wkr, wqr, bk, bkr, bqr]
     var stateEvent:[Bool]
     //State event, en passant
     var stateEventEnPassant:Bool
-    init(fromRow fr:Int, fromCol fc:Int, toRow tr:Int, toCol tc:Int, captured c:Piece?,stateEventCastle e:[Bool], stateEventEnPassant ee:Bool){
+    init(fromRow fr:Int, fromCol fc:Int, toRow tr:Int, toCol tc:Int, captured c:Piece?,stateEventCastle e:[Bool], stateEventEnPassant ee:Bool, promotion p:Bool){
         self.fromRow = fr
         self.fromCol = fc
         self.toRow = tr
@@ -38,6 +40,7 @@ class Event{
         self.captured = c
         self.stateEvent = e
         self.stateEventEnPassant = ee
+        self.promotionHappend = p
     }
 }
 
@@ -46,6 +49,7 @@ class Piece{
     var color: Bool
     var row: Int
     var col: Int
+    var id:Int
     //avalibleMoves is an interface method in "Java" terms. 
     func avalibleMoves() -> [Moves]{
         return [Moves(row: -1, col: -1)]
@@ -54,6 +58,7 @@ class Piece{
         self.color = color
         self.row = row
         self.col = col
+        self.id = id
     }
 }
 /*
@@ -69,6 +74,9 @@ var Events:[Event] = []
 var Board: [[Piece?]] = Array(repeating: Array(repeating: nil, count:8), count: 8)
 var white: [Piece?] = Array(repeating: nil, count: 16)
 var black: [Piece?] = Array(repeating: nil, count: 16)
+
+var whiteMoves: [[Moves]] = Array(repeating: [], count:16)
+var blackMoves: [[Moves]] = Array(repeating: [], count:16)
 
 
 class Pawn: Piece{
@@ -483,9 +491,9 @@ class Queen:Piece{
 func canWhiteKingGoHere(Row row:Int, Col col:Int) -> Bool {
     for i in 0..<16 {
         if black[i] != nil {
-            let moves:[Moves] = black[i]!.avalibleMoves()
+            let moves:[Moves] = blackMoves[i]
             for j in 0..<moves.count{
-                if moves[j].row == row && moves[j].col == col {
+                if moves[j].row == row && moves[j].col == col{
                     return false
                 }
             }
@@ -497,7 +505,7 @@ func canWhiteKingGoHere(Row row:Int, Col col:Int) -> Bool {
 func canBlackKingGoHere(Row row:Int, Col col:Int) -> Bool {
     for i in 0..<16 {
         if white[i] != nil {
-            let moves:[Moves] = white[i]!.avalibleMoves()
+            let moves:[Moves] = whiteMoves[i]
             for j in 0..<moves.count{
                 if moves[j].row == row && moves[j].col == col {
                     return false
@@ -509,7 +517,6 @@ func canBlackKingGoHere(Row row:Int, Col col:Int) -> Bool {
 }
 
 class King:Piece{
-    //Crashing. Need to implement a move array to store previous moves 
     override init(color:Bool, id:Int, row:Int, col: Int) {
         super.init(color: color, id:id, row: row, col: col)
     }
@@ -518,108 +525,84 @@ class King:Piece{
         //up
         if self.row > 0 {
             let p:Piece? = Board[self.row-1][self.col]
-            var rtn:Bool
-            if(self.color){
-                rtn = canWhiteKingGoHere(Row: self.row-1, Col: self.col)
-            }else{
-                rtn = canBlackKingGoHere(Row: self.row-1, Col: self.col)
-            }
-            if((p == nil || p!.color != self.color) && rtn){
+           
+            if((p == nil || p!.color != self.color) ){
                 collection.append(Moves(row: self.row-1,col: self.col))
             }
         }
         //Left
         if self.col < 7 {
             let p:Piece? = Board[self.row][self.col+1]
-            var rtn:Bool
-            if(self.color){
-                rtn = canWhiteKingGoHere(Row: self.row, Col: self.col+1)
-            }else{
-                rtn = canBlackKingGoHere(Row: self.row, Col: self.col+1)
-            }
-            if((p == nil || p!.color != self.color) && rtn){
+          
+            if((p == nil || p!.color != self.color) ){
                 collection.append(Moves(row: self.row,col: self.col+1))
             }
         }
         //Down
         if self.row < 7 {
             let p:Piece? = Board[self.row+1][self.col]
-            var rtn:Bool
-            if(self.color){
-                rtn = canWhiteKingGoHere(Row: self.row+1, Col: self.col)
-            }else{
-                rtn = canBlackKingGoHere(Row: self.row+1, Col: self.col)
-            }
-            if((p == nil || p!.color != self.color) && rtn){
+          
+            if((p == nil || p!.color != self.color)){
                 collection.append(Moves(row: self.row+1,col: self.col))
             }
         }
         //Left
         if self.col > 0 {
             let p:Piece? = Board[self.row][self.col-1]
-            var rtn:Bool
-            if(self.color){
-                rtn = canWhiteKingGoHere(Row: self.row, Col: self.col-1)
-            }else{
-                rtn = canBlackKingGoHere(Row: self.row, Col: self.col-1)
-            }
-            if((p == nil || p!.color != self.color) && rtn){
+           
+            if((p == nil || p!.color != self.color) ){
                 collection.append(Moves(row: self.row,col: self.col-1))
             }
         }
         //Up-right
         if self.col < 7 && self.row > 0 {
             let p:Piece? = Board[self.row-1][self.col+1]
-            var rtn:Bool
-            if(self.color){
-                rtn = canWhiteKingGoHere(Row: self.row-1, Col: self.col+1)
-            }else{
-                rtn = canBlackKingGoHere(Row: self.row-1, Col: self.col+1)
-            }
-            if((p == nil || p!.color != self.color) && rtn){
+           
+            if((p == nil || p!.color != self.color)){
                 collection.append(Moves(row: self.row-1,col: self.col+1))
             }
         }
         //bottom-right
         if self.col < 7 && self.row < 7 {
             let p:Piece? = Board[self.row+1][self.col+1]
-            var rtn:Bool
-            if(self.color){
-                rtn = canWhiteKingGoHere(Row: self.row+1, Col: self.col+1)
-            }else{
-                rtn = canBlackKingGoHere(Row: self.row+1, Col: self.col+1)
-            }
-            if((p == nil || p!.color != self.color) && rtn){
+            if((p == nil || p!.color != self.color)){
                 collection.append(Moves(row: self.row+1,col: self.col+1))
             }
         }
         //bottom-left
         if self.col > 0 && self.row < 7 {
             let p:Piece? = Board[self.row+1][self.col-1]
-            var rtn:Bool
-            if(self.color){
-                rtn = canWhiteKingGoHere(Row: self.row+1, Col: self.col-1)
-            }else{
-                rtn = canBlackKingGoHere(Row: self.row+1, Col: self.col-1)
-            }
-            if((p == nil || p!.color != self.color) && rtn){
+           
+            if((p == nil || p!.color != self.color)){
                 collection.append(Moves(row: self.row+1,col: self.col-1))
             }
         }
         //top-left
         if self.col > 0 && self.row > 0 {
             let p:Piece? = Board[self.row-1][self.col-1]
-            var rtn:Bool
-            if(self.color){
-                rtn = canWhiteKingGoHere(Row: self.row-1, Col: self.col-1)
-            }else{
-                rtn = canBlackKingGoHere(Row: self.row-1, Col: self.col-1)
-            }
-            if((p == nil || p!.color != self.color) && rtn){
+            
+            if((p == nil || p!.color != self.color)){
                 collection.append(Moves(row: self.row-1,col: self.col-1))
             }
         }
         //TODO finish king
+        //KingSide castle
+        if self.color {
+            if Board[7][6] == nil && Board[7][5] == nil && !Events.last!.stateEvent[0] && !Events.last!.stateEvent[1]{
+                collection.append(Moves(row:7, col:6))
+            }
+            if Board[7][2] == nil && Board[7][3] == nil && Board[7][4] == nil && !Events.last!.stateEvent[0] && !Events.last!.stateEvent[2]{
+                collection.append(Moves(row:7, col:2))
+            }
+        }else{
+            if Board[0][6] == nil && Board[0][5] == nil && !Events.last!.stateEvent[3] && !Events.last!.stateEvent[4]{
+                collection.append(Moves(row:0, col:6))
+            }
+            if Board[0][2] == nil && Board[0][3] == nil && Board[0][4] == nil && !Events.last!.stateEvent[3] && !Events.last!.stateEvent[5]{
+                collection.append(Moves(row:7, col:2))
+            }
+        }
+
         return collection
     }
 }
@@ -645,10 +628,122 @@ func canPieceConformToMoveModel(fromRow:Int, fromCol:Int, toRow:Int, toCol:Int) 
     let validMove:Bool = canPieceConformToMoveModel(row: toRow, col: toCol, moves: m)
     if validMove {
         updatePieceLocationModel(p: p!, toRow: toRow, toCol: toCol)
+        let captured:Piece? = Board[toRow][toCol]
+        if captured != nil && captured!.color {
+            white[captured!.id] = nil
+        }else if captured != nil{
+            black[captured!.id] = nil
+        }
         Board[toRow][toCol] = Board[fromRow][fromCol]
         Board[fromRow][fromCol] = nil
+        //Save into moves array
+        if p!.color {
+            updateMovesForWhite()
+            updateMovesForBlack()
+        }else{
+            updateMovesForBlack()
+            updateMovesForWhite()
+        }
+        let whiteInCheck = isWhiteInCheck()
+        let blackInCheck = isBlackInCheck()
+        if p!.color && whiteInCheck{
+            //Invalid move causing check
+            Board[toRow][toCol] = captured
+            if captured != nil {
+                black[captured!.id] = captured
+            }
+            Board[fromRow][fromCol] = p!
+            updatePieceLocationModel(p: p!, toRow: fromRow, toCol: fromCol)
+            if !p!.color {
+                updateMovesForWhite()
+                updateMovesForBlack()
+            }else{
+                updateMovesForBlack()
+                updateMovesForWhite()
+            }
+            return false
+        }else if !p!.color && blackInCheck {
+            //Invalid move causing check
+            Board[toRow][toCol] = captured
+            if captured != nil {
+                white[captured!.id] = captured
+            }
+            Board[fromRow][fromCol] = p!
+            updatePieceLocationModel(p: p!, toRow: fromRow, toCol: fromCol)
+            if !p!.color {
+                updateMovesForWhite()
+                updateMovesForBlack()
+            }else{
+                updateMovesForBlack()
+                updateMovesForWhite()
+            }
+            return false
+        }
+        if p!.color && blackInCheck || !p!.color && whiteInCheck{
+            //viberate feedback
+            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+        }
+        //Append an event into the event array
+        
+        var lastEvent:[Bool] = Array(Events.last!.stateEvent)
+        if p!.id == 15 {
+            if p!.color {
+                lastEvent[0] = true
+            }else{
+                lastEvent[3] = true
+            }
+        }else if p!.id == 8 {
+            if p!.color {
+                lastEvent[1] = true
+            }else{
+                lastEvent[4] = true
+            }
+        }else if p!.id == 9{
+            if p!.color {
+                lastEvent[2] = true
+            }else{
+                lastEvent[5] = true
+            }
+        }
+        
+
+        //Set false for now promotion
+        let e:Event = Event(fromRow: fromRow, fromCol: fromCol, toRow: toRow, toCol: toCol, captured: captured, stateEventCastle: lastEvent, stateEventEnPassant: p!.id < 8, promotion: false)
+        Events.append(e)
     }
     return validMove
+}
+
+/*Model to update moves for all pieces*/
+func updateAllMoves(){
+    updateMovesForWhite()
+    updateMovesForBlack()
+}
+
+func updateMovesForWhite(){
+    for i in 0..<16 {
+        let wp:Piece? = white[i]
+        if wp != nil {
+            whiteMoves[i] = wp!.avalibleMoves()
+        }
+    }
+}
+
+func updateMovesForBlack(){
+    for i in 0..<16 {
+        let bp:Piece? = black[i]
+        if bp != nil {
+            blackMoves[i] = bp!.avalibleMoves()
+        }
+    }
+}
+/*Model to save moves array*/
+func saveMovesForPiece(Piece p:Piece, Moves m:[Moves]){
+    if p.color {
+        whiteMoves[p.id] = m
+    }else{
+        blackMoves[p.id] = m
+    }
 }
 
 /*Model method for updating piece object's location*/
@@ -674,6 +769,8 @@ func isWhiteInCheck() -> Bool {
     return false
 }
 
+
+
 /*Model method for check if black king is in check*/
 func isBlackInCheck() -> Bool {
     let p:Piece = black[15]!
@@ -697,6 +794,13 @@ func printMoves(moves: [Moves]){
     }
 }
 
+func resetBoardModel(){
+    for i in 0..<8{
+        for j in 0..<8{
+            Board[i][j] = nil
+        }
+    }
+}
 func setUpBoardModel(){
     for i in 0..<8{
         let w:Piece = Pawn(color: true,id: i,row: 6,col: i)
@@ -705,7 +809,7 @@ func setUpBoardModel(){
         black[i] = b
         Board[6][i] = w
         Board[1][i] = b
-        //Add more pieces later
+
     }
     let lbishop:Piece = Bishop(color:true, id: 12, row:7, col:2)
     let rbishop:Piece = Bishop(color:true, id: 13, row:7, col:5)
@@ -744,8 +848,8 @@ func setUpBoardModel(){
     
     let blknight:Piece = Knight(color:false, id: 10, row:0, col:1)
     let brknight:Piece = Knight(color:false, id: 11, row:0, col:6)
-    black[10] = lknight
-    black[11] = rknight
+    black[10] = blknight
+    black[11] = brknight
     Board[0][1] = blknight
     Board[0][6] = brknight
     
@@ -756,10 +860,10 @@ func setUpBoardModel(){
     Board[7][3] = queen
     Board[0][3] = bqueen
     
-    /*let king:Piece = King(color:true, id: 15, row:0, col:4)
-    let bking:Piece = King(color:false, id: 15, row:7, col:4)
+    let king:Piece = King(color:true, id: 15, row:7, col:4)
+    let bking:Piece = King(color:false, id: 15, row:0, col:4)
     black[15] = bking
     white[15] = king
     Board[7][4] = king
-    Board[0][4] = bking*/
+    Board[0][4] = bking
 }

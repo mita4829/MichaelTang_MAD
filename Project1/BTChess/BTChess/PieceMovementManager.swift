@@ -1,28 +1,30 @@
 //
-//  PieceMovementManager.swift
+//  BoardModel.swift
 //  BTChess
 //
-//  Created by Michael Tang on 10/5/17.
+//  Updated by Michael Tang on 10/16/17.
 //  Copyright © 2017 Michael Tang. All rights reserved.
 //
 
-//Reference from https://www.ralfebert.de/tutorials/ios-swift-multipeer-connectivity/
+
+//Tutorial for bluetooth code https://www.ralfebert.de/tutorials/ios-swift-multipeer-connectivity/
 
 import Foundation
 import MultipeerConnectivity
 
 protocol PieceMovementManagerDelegate {
-    
+    //Alert on connection
     func connectedDevicesChanged(manager : PieceMovementManager, connectedDevices: [String])
-    func colorChanged(manager : PieceMovementManager, colorString: String)
+    //Send moves over bluetooth as a 4char string
+    func packet(manager : PieceMovementManager, packet: String)
     
 }
 
 class PieceMovementManager : NSObject {
+ 
+    private let PieceMovementType = "movement"
     
-    private let ColorServiceType = "piece-movement"
-    
-    private let myID = MCPeerID(displayName: UIDevice.current.name)
+    private let myPeerId = MCPeerID(displayName: UIDevice.current.name)
     
     private let serviceAdvertiser : MCNearbyServiceAdvertiser
     private let serviceBrowser : MCNearbyServiceBrowser
@@ -30,14 +32,14 @@ class PieceMovementManager : NSObject {
     var delegate : PieceMovementManagerDelegate?
     
     lazy var session : MCSession = {
-        let session = MCSession(peer: self.myID, securityIdentity: nil, encryptionPreference: .required)
+        let session = MCSession(peer: self.myPeerId, securityIdentity: nil, encryptionPreference: .required)
         session.delegate = self
         return session
     }()
     
     override init() {
-        self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myID, discoveryInfo: nil, serviceType: ColorServiceType)
-        self.serviceBrowser = MCNearbyServiceBrowser(peer: myID, serviceType: ColorServiceType)
+        self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerId, discoveryInfo: nil, serviceType: PieceMovementType)
+        self.serviceBrowser = MCNearbyServiceBrowser(peer: myPeerId, serviceType: PieceMovementType)
         
         super.init()
         
@@ -48,14 +50,15 @@ class PieceMovementManager : NSObject {
         self.serviceBrowser.startBrowsingForPeers()
     }
     
-    //Send movement to peer
-    func send(movementString:String) {
+    func send(packet : String) {
+        print("%@", "sending packet: \(packet) to \(session.connectedPeers.count) peers")
+        
         if session.connectedPeers.count > 0 {
             do {
-                try self.session.send(movementString.data(using: .utf8)!, toPeers: session.connectedPeers, with: .reliable)
+                try self.session.send(packet.data(using: .utf8)!, toPeers: session.connectedPeers, with: .reliable)
             }
             catch let error {
-                print("Error while sending move: \(error)")
+                print("Error for sending: \(error)")
             }
         }
         
@@ -68,61 +71,65 @@ class PieceMovementManager : NSObject {
     
 }
 
+//Class extends to conform to MCNearbyService...Delegate to know of events of nearby players, who was invited, and settings for timeout limit.
+extension PieceMovementManager : MCNearbyServiceBrowserDelegate {
+    
+    
+    func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
+        print("Found peer with ID: \(peerID)")
+        print("Invited peer with ID: \(peerID)")
+        //Set timeout to 15 sec
+        browser.invitePeer(peerID, to: self.session, withContext: nil, timeout: 10)
+    }
+    
+    func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
+        print("Lost player with ID: \(peerID)")
+    }
+    
+}
+
+//Class extend to conform to MCNearbyServiceAdvertiser to know of events of when bluetooth connection broadcast begins and notification of an invitation from a nearby player.
 extension PieceMovementManager : MCNearbyServiceAdvertiserDelegate {
     
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didNotStartAdvertisingPeer error: Error) {
-        print("Did not start advertising to peer \(error)")
+        print("Did not start advertising peer: \(error)")
     }
     
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        print("Did receive an invitation from a peer over network \(peerID)")
+        print("Did receive invitation from peer \(peerID)")
         invitationHandler(true, self.session)
     }
     
 }
 
-extension PieceMovementManager : MCNearbyServiceBrowserDelegate {
-    
-    func browser(_ browser: MCNearbyServiceBrowser, didNotStartBrowsingForPeers error: Error) {
-        NSLog("%@", "didNotStartBrowsingForPeers: \(error)")
-    }
-    
-    func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
-        NSLog("%@", "foundPeer: \(peerID)")
-        NSLog("%@", "invitePeer: \(peerID)")
-        browser.invitePeer(peerID, to: self.session, withContext: nil, timeout: 10)
-    }
-    
-    func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
-        NSLog("%@", "lostPeer: \(peerID)")
-    }
-    
-}
+
 
 extension PieceMovementManager : MCSessionDelegate {
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        NSLog("%@", "peer \(peerID) didChangeState: \(state)")
+        print("peer \(peerID) didChangeState: \(state)")
         self.delegate?.connectedDevicesChanged(manager: self, connectedDevices:
             session.connectedPeers.map{$0.displayName})
     }
     
+    //Function to 
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        NSLog("%@", "didReceiveData: \(data)")
+        print("didReceiveData: \(data)")
         let str = String(data: data, encoding: .utf8)!
-        self.delegate?.colorChanged(manager: self, colorString: str)
+        self.delegate?.packet(manager: self, packet: str)
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        NSLog("%@", "didReceiveStream")
+        print("didReceiveStream")
     }
     
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
-        NSLog("%@", "didStartReceivingResourceWithName")
+        print("didStartReceivingResourceWithName")
     }
     
-    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL, withError error: Error?) {
-        NSLog("%@", "didFinishReceivingResourceWithName")
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+        print("didFinishReceivingResourceWithName")
     }
     
 }
+

@@ -22,17 +22,39 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     ]
     var movementStack:[Moves] = []
     //let pieceManage = PieceMovementManager()
-    
+    let pieceManage = PieceMovementManager()
     override func viewDidLoad() {
         super.viewDidLoad()
         board.delegate = self
+        resizeSquaresView()
+        pieceManage.delegate = self
         setUpBoardModel()
         
         // Do any additional setup after loading the view, typically from a nib.
     }
+    
+   
 
+    @IBAction func findPlayer(_ sender: UIBarButtonItem) {
+        
+    }
+    @IBAction func resignGame(_ sender: UIBarButtonItem) {
+        let alert = UIAlertController(title: "Resign game?", message: "Do you want to resign your game?", preferredStyle: UIAlertControllerStyle.alert)
+        let cancel=UIAlertAction(title: "Cancel", style:UIAlertActionStyle.cancel, handler: nil)
+        let confirm=UIAlertAction(title: "Confirm", style:UIAlertActionStyle.destructive){
+            UIAlertAction in
+                self.resetBoardView()
+        }
+        alert.addAction(cancel)
+        alert.addAction(confirm)
+        self.present(alert, animated: true, completion:nil)
+        
+        
+    }
     override func viewWillAppear(_ animated: Bool) {
-        resizeSquaresView()
+        //Create a starting event node
+        let e:Event = Event(fromRow: 0, fromCol: 0, toRow: 0, toCol: 0, captured: nil, stateEventCastle: [false,false,false,false,false,false], stateEventEnPassant: false, promotion: false)
+        Events.append(e)
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -48,6 +70,17 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         
         newCell.pieceImage.image = oldCell.pieceImage.image
         oldCell.pieceImage.image = UIImage(named: "")
+    }
+    
+    
+    func resetBoardView(){
+        for i in 0..<64{
+            let newCell:BoardSquare = board.cellForItem(at: IndexPath(item: i, section: 0)) as! BoardSquare
+            newCell.pieceImage.image = UIImage(named: pieceImageSet[i])
+        }
+        resetBoardModel()
+        setUpBoardModel()
+        
     }
  
     //View delegated method
@@ -75,7 +108,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         square.pieceImage.image = UIImage(named: (pieceImageSet[indexPath.row]))
         return square
     }
-    
+
   
     //Controller to communicate touch events to the model
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -91,6 +124,10 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
             if validateMove {
                 //Update View 
                 updateBoardImagesView(fromRow: movementStack[0].row, fromCol: movementStack[0].col, toRow: row, toCol: col)
+                pieceManage.send(packet: String(movementStack[0].row)+String(movementStack[0].col)+String(row)+String(col))
+                //Heptic feedback for each move
+                let generator = UIImpactFeedbackGenerator(style: .medium)
+                generator.impactOccurred()
             }
             revertColor(indexPath: IndexPath(item: movementStack[0].row*8+movementStack[0].col, section: 0))
             movementStack.removeAll()
@@ -105,9 +142,9 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     //View method
     func resizeSquaresView(){
         let boardLayout:UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        let sizeOfBoardWidth:CGFloat = self.board.frame.width
+        //let sizeOfBoardWidth:CGFloat = self.board.frame.width
         
-        let width:CGFloat = (sizeOfBoardWidth-16)/8
+        let width:CGFloat = CGFloat(Float(UIScreen.main.bounds.width-38)/8)
         
         let squareSize:CGSize = CGSize(width: width, height: width)
         
@@ -145,32 +182,44 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         }
     }
     
-    func changeViewFromPeerEvent(packet:String){
-        
+    func boardDidChange(packet:String){
+        let fromRow:Int = Int(String(packet[packet.index(packet.startIndex, offsetBy:0)]))!
+        let fromCol:Int = Int(String(packet[packet.index(packet.startIndex, offsetBy:1)]))!
+        let toRow:Int = Int(String(packet[packet.index(packet.startIndex, offsetBy:2)]))!
+        let toCol:Int = Int(String(packet[packet.index(packet.startIndex, offsetBy:3)]))!
+        print("Called with \(packet)")
+        let validateMove:Bool = canPieceConformToMoveModel(fromRow: fromRow, fromCol: fromCol, toRow: toRow, toCol: toCol)
+        if validateMove {
+            //Update View
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.impactOccurred()
+            updateBoardImagesView(fromRow: fromRow, fromCol: fromCol, toRow: toRow, toCol: toCol)
+        }
     }
     
 }
+
+
 
 extension ViewController : PieceMovementManagerDelegate {
     
     func connectedDevicesChanged(manager: PieceMovementManager, connectedDevices: [String]) {
         OperationQueue.main.addOperation {
-            //self.connectionsLabel.text = "Connections: \(connectedDevices)"
+            if connectedDevices.count > 0 {
+                let alert = UIAlertController(title: "Connected!", message: "You are now playing with \(connectedDevices[0])!", preferredStyle: UIAlertControllerStyle.alert)
+                let cancel=UIAlertAction(title: "Okay", style:UIAlertActionStyle.cancel, handler: nil)
+                alert.addAction(cancel)
+                self.present(alert, animated: true, completion: nil)
+            }   
         }
     }
     
-    func colorChanged(manager: PieceMovementManager, colorString: String) {
+    func packet(manager: PieceMovementManager, packet: String) {
         OperationQueue.main.addOperation {
-            /*switch colorString {
-            case "red":
-                self.change(color: .red)
-            case "yellow":
-                self.change(color: .yellow)
-            default:
-                NSLog("%@", "Unknown color value received: \(colorString)")
-            }*/
+                self.boardDidChange(packet: packet)
+            }
         }
-    }
+    
     
 }
 
