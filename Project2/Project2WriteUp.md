@@ -11,3 +11,5 @@ produce a similar noise a real piano would make.
 
 <b>Where will you get any content needed for your app? This could include text, formulas, whatever your app requires.</b><br/>
 I will photoshop all the needed images. As for sound, I'm not so sure yet. I might have to look around for existing mp3 files of piano notes only before the worst case event, which is just recording an actual piano.
+
+![Alt text](https://github.com/mita4829/MichaelTang_MAD/blob/master/Project2/main.JPG "PocketPiano")
