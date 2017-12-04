@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">EspressoMeh</string>
+    <string name="espressoLabel">Espresso Drink Dictionary</string>
+    <string name="appDescription">Research those drinks names that you hear when you\'re in line at Starbucks.</string>
+    <string name="buttonResearch">Research</string>
+    <string name="getInfo">Get Info</string>
+    <string name="google">Google It</string>
+    <string-array name="drinks">
+        <item>Espresso</item>
+        <item>Macchiato</item>
+        <item>Cappuccino</item>
+        <item>Americano</item>
+        <item>Latte</item>
+        <item>Frappuccino</item>
+    </string-array>
+</resources>
