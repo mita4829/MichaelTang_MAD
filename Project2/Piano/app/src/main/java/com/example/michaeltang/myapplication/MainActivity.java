@@ -13,6 +13,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* Source for learning how to play a sound from a button click
+        *  https://www.youtube.com/watch?v=9oj4f8721LM
+        *
+        * */
+
         final MediaPlayer c = MediaPlayer.create(this, R.raw.c);
         ImageButton cKey = (ImageButton) findViewById(R.id.c);
 
