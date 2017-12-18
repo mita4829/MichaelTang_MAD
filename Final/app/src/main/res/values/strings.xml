@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Burrito</string>
+    <string name="burritoBuilder">Burrito Builder</string>
+    <string name="build">Build</string>
+    <string name="findBurrito">Find Burrito</string>
+    <string name="burrito">burrito</string>
+    <string name="taco">taco</string>
+    <string name="salsa">salsa</string>
+    <string name="sourCream">sour cream</string>
+    <string name="cheese">cheese</string>
+    <string name="guacamole">guacamole</string>
+    <string name="glutenFree">Gluten-free</string>
+    <string name="meat">meat</string>
+    <string name="veggie">veggie</string>
+    <string name="burritoName">Burrito Name</string>
+    <string-array name="location">
+        <item>The Hill</item>
+        <item>29th Street</item>
+        <item>Pearl Street</item>
+    </string-array>
+    <color name="orange">#f49335</color>
+</resources>
